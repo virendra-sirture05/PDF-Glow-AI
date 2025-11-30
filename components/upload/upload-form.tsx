@@ -5,7 +5,10 @@ import { z } from "zod";
 import { UploadButton, useUploadThing } from "@/utils/uploadthing";
 
 import { toast } from "sonner";
-import { generatePdfSummary } from "@/actions/upload-action";
+import {
+  generatePdfSummary,
+  storePdfSummaryAction,
+} from "@/actions/upload-action";
 
 const schema = z.object({
   file: z
@@ -96,29 +99,29 @@ const UploadForm = () => {
       const result = await generatePdfSummary(resp);
       console.log("res: ", result);
 
-      // const { data = null, message = null } = result || {};
+      const { data = null, message = null } = result || {};
 
-      // if (data) {
-      //   let storedResult;
-      //   toast("Saving PDF....", {
-      //     description: "Hang tight!, We are saving your summary",
-      //   });
+      if (data) {
+        let storedResult;
+        toast("Saving PDF....", {
+          description: "Hang tight!, We are saving your summary",
+        });
 
-      //   if(data.summary){
-      //     storedResult = await storePdfSummaryAction({
-      //       summary : data.summary,
-      //       original_file_url : resp?.[0].serverData.fileUrl,
-      //       title : data.title,
-      //       fileName : file.name
-      //     })
-      //     console.log(storedResult);
-      //     toast("Summary Generated",{
-      //       description : "Your  PDF has been successfully summarized and saved"
-      //     })
-      //      formRef.current?.reset();
-      //   }
+        if (data.summary) {
+          storedResult = await storePdfSummaryAction({
+            summary_text: data.summary,
+            original_file_url: resp?.[0].serverData.file.url,
+            title: data.title,
+            file_name: file.name,
+          });
 
-      // }
+          console.log(storedResult);
+          toast("Summary Generated", {
+            description: "Your  PDF has been successfully summarized and saved",
+          });
+          formRef.current?.reset();
+        }
+      }
 
       // save the summary to the database
       // redirect to the [id] summary page
