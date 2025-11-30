@@ -5,6 +5,7 @@ import { z } from "zod";
 import { UploadButton, useUploadThing } from "@/utils/uploadthing";
 
 import { toast } from "sonner";
+import { generatePdfSummary } from "@/actions/upload-action";
 
 const schema = z.object({
   file: z
@@ -20,7 +21,6 @@ const schema = z.object({
 });
 
 const UploadForm = () => {
-
   const formRef = useRef<HTMLFormElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -47,46 +47,85 @@ const UploadForm = () => {
     try {
       setIsLoading(true);
       const formData = new FormData(e.currentTarget);
-    const file = formData.get("file") as File;
+      const file = formData.get("file") as File;
 
-    const validatedFields = schema.safeParse({ file });
-    console.log(validatedFields);
+      const validatedFields = schema.safeParse({ file });
+      console.log(validatedFields);
 
-    if (!validatedFields.success) {
-      const errorMsg =
-        validatedFields.error.flatten().fieldErrors.file?.[0] ?? "Invalid file";
-      console.log(errorMsg);
-      toast.error("something went wrong");
-      setError(errorMsg);
-      setUploading(false);
-      setIsLoading(false);
-      return;
-    }
-    toast.success("Uploading pdf");
+      if (!validatedFields.success) {
+        const errorMsg =
+          validatedFields.error.flatten().fieldErrors.file?.[0] ??
+          "Invalid file";
+        console.log(errorMsg);
+        toast.error("something went wrong");
+        setError(errorMsg);
+        setUploading(false);
+        setIsLoading(false);
+        return;
+      }
+      toast.success("Uploading pdf");
 
-    // upload the file to uploadthing
-    const resp = await startUpload([file]);
-    if (!resp) {
-      toast.error("something went wrong");
-      setIsLoading(false);
-    }
+      // upload the file to uploadthing
+      const resp = await startUpload([file]);
+      if (!resp || resp.length === 0) {
+        toast.error("Something went wrong during upload");
+        setIsLoading(false);
+        setUploading(false);
+        return;
+      }
 
-    toast("Processing PDF", {
-      description: "Hang tight!, Our AI is reading through your document!",
-      action: {
-        label: "Undo",
-        onClick: () => console.log("Undo"),
-      },
-    });
+      // Get correct PDF URL (ufsUrl)
+      const pdfUrl = resp[0]?.ufsUrl || resp[0]?.serverData?.file?.ufsUrl;
+      if (!pdfUrl) {
+        toast.error("Failed to get PDF URL");
+        setIsLoading(false);
+        setUploading(false);
+        return;
+      }
 
-    
+      console.log("PDF URL:", pdfUrl);
+
+      toast("Processing PDF", {
+        description: "Hang tight! Our AI is reading through your document!",
+      });
+
+      // validating the fields - DONE
+      // parse the pdf using langchain
+      // summarize the pdf using AI
+
+      const result = await generatePdfSummary(resp);
+      console.log("res: ", result);
+
+      // const { data = null, message = null } = result || {};
+
+      // if (data) {
+      //   let storedResult;
+      //   toast("Saving PDF....", {
+      //     description: "Hang tight!, We are saving your summary",
+      //   });
+
+      //   if(data.summary){
+      //     storedResult = await storePdfSummaryAction({
+      //       summary : data.summary,
+      //       original_file_url : resp?.[0].serverData.fileUrl,
+      //       title : data.title,
+      //       fileName : file.name
+      //     })
+      //     console.log(storedResult);
+      //     toast("Summary Generated",{
+      //       description : "Your  PDF has been successfully summarized and saved"
+      //     })
+      //      formRef.current?.reset();
+      //   }
+
+      // }
+
+      // save the summary to the database
+      // redirect to the [id] summary page
     } catch (error) {
-      console.log('Error occurred', error);
+      console.log("Error occurred", error);
       formRef.current?.reset();
-      
     }
-
-    
   }; // ✅ MISSING - handleSubmit function close
 
   return (
@@ -104,7 +143,11 @@ const UploadForm = () => {
       /> */}
 
       {/* Option 2: Custom form with validation */}
-      <UploadFormInput isLoading={isLoading} ref={formRef} onSubmit={handleSubmit} />
+      <UploadFormInput
+        isLoading={isLoading}
+        ref={formRef}
+        onSubmit={handleSubmit}
+      />
 
       {/* Show error message */}
       {error && <p className="text-red-600 mt-2">{error}</p>}
