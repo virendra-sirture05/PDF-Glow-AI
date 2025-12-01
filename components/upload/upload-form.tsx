@@ -9,6 +9,7 @@ import {
   generatePdfSummary,
   storePdfSummaryAction,
 } from "@/actions/upload-action";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   file: z
@@ -28,7 +29,7 @@ const UploadForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
   const { startUpload } = useUploadThing("pdfUploader", {
     onClientUploadComplete: (res) => {
       console.log("✅ Upload successful:", res);
@@ -120,6 +121,7 @@ const UploadForm = () => {
             description: "Your  PDF has been successfully summarized and saved",
           });
           formRef.current?.reset();
+          router.push(`/summaries/${storedResult.data?.id}`)
         }
       }
 
@@ -128,6 +130,8 @@ const UploadForm = () => {
     } catch (error) {
       console.log("Error occurred", error);
       formRef.current?.reset();
+    }finally{
+      setIsLoading(false);
     }
   }; // ✅ MISSING - handleSubmit function close
 

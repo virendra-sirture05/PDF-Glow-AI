@@ -25,7 +25,7 @@ const Header = () => {
 
         <SignedIn>
           {" "}
-          <NavLink href={"/dashboar"}>Dashboard</NavLink>
+          <NavLink href={"/dashboard"}>Dashboard</NavLink>
         </SignedIn>
       </div>
       <div className="flex flex-col md:flex-row">

@@ -5,6 +5,7 @@ import { getSummaryFromOpenAi } from "@/lib/openai";
 import { prisma } from "@/lib/prisma";
 import { formatFileNameAsTitle } from "@/utils/format-utils";
 import { auth } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 interface PdfSummaryType {
   user_id: string;
@@ -168,6 +169,7 @@ export const storePdfSummaryAction = async ({
       };
     }
 
+    revalidatePath(`/summaries/${savedSummary.id}`);
     return {
       success: true,
       message: "PDF summary saved successfully",
