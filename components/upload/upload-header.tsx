@@ -1,10 +1,17 @@
 import React from "react";
 import { Badge } from "../ui/badge";
 import { Sparkles } from "lucide-react";
+import { MotionDiv } from "../common/motion-wrapper";
+import { itemVariants } from "@/utils/constants";
 
 const UploadHeader = () => {
   return (
-    <div className=" flex flex-col justify-center items-center gap-4 mx-auto text-center mt-10">
+    <MotionDiv
+      variants={itemVariants}
+      initial="hidden"
+      whileInView="visible"
+      className=" flex flex-col justify-center items-center gap-4 mx-auto text-center mt-10"
+    >
       <Badge className=" bg-white text-rose-600 border border-rose-600 px-5 py-3 bg-linear-to-r hover:from-rose-200 hover:via-rose-500 hover:to-rose-800 hover:animate-pulse cursor-pointer animate-pulse">
         <Sparkles
           style={{ width: "20px", height: "20px" }}
@@ -22,7 +29,7 @@ const UploadHeader = () => {
         </span>{" "}
       </h1>
       <p>Upload your PDF and let our AI do the magic!</p>
-    </div>
+    </MotionDiv>
   );
 };
 

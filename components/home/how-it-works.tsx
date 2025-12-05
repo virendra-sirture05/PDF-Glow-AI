@@ -1,4 +1,5 @@
 import { Upload, Sparkles, FileText, MoveRight } from "lucide-react";
+import { MotionDiv, MotionH2 } from "../common/motion-wrapper";
 
 export default function HowItWorksSection() {
   const steps = [
@@ -24,24 +25,38 @@ export default function HowItWorksSection() {
 
   return (
     <section className="py-10 px-4 my-20">
-
       <div className="container mx-auto max-w-5xl">
         {/* Heading */}
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-rose-500 to-rose-700 bg-clip-text text-transparent">
+          <MotionH2
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{
+              duration: 0.8,
+              delay: 0.5,
+              ease: [0, 0.71, 0.2, 1.01],
+            }}
+            className="text-3xl md:text-4xl font-bold mb-2 bg-gradient-to-r from-rose-500 to-rose-700 bg-clip-text text-transparent"
+          >
             How It Works
-          </h2>
+          </MotionH2>
           <p className="text-muted-foreground text-base">
             Get your summary in three simple steps
           </p>
         </div>
-        
+
         {/* Steps */}
         <div className="grid md:grid-cols-3 gap-4">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <div key={step.id} className="flex items-center gap-3">
+              <MotionDiv
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{opacity:1, y : 0}}
+                transition={{duration:0.5 , delay : index * 0.2}}
+                key={step.id}
+                className="flex items-center gap-3"
+              >
                 <div className="relative flex-1">
                   <div className="bg-card border border-border rounded-xl p-5 hover:shadow-lg transition-all duration-300">
                     {/* Step Number */}
@@ -75,7 +90,7 @@ export default function HowItWorksSection() {
                     size={22}
                   />
                 )}
-              </div>
+              </MotionDiv>
             );
           })}
         </div>
