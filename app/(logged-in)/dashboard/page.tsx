@@ -1,4 +1,5 @@
 "use client";
+
 import { getSummary } from "@/actions/get-summary-action";
 import BgGradient from "@/components/common/bg-gradient";
 import {
@@ -13,6 +14,8 @@ import { itemVariants } from "@/utils/constants";
 import { AlertCircle, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
+export const dynamic = 'force-dynamic';
 
 type Summary = {
   id: string;

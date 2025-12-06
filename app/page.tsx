@@ -7,6 +7,7 @@ import PricingSection from "@/components/home/pricing-section";
 import { prisma } from "@/lib/prisma";
 import { currentUser } from "@clerk/nextjs/server";
 
+export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const user = await currentUser();

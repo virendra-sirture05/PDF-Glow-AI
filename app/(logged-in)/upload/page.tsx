@@ -1,3 +1,4 @@
+
 import BgGradient from "@/components/common/bg-gradient";
 import { MotionDiv } from "@/components/common/motion-wrapper";
 import UploadForm from "@/components/upload/upload-form";
@@ -8,6 +9,7 @@ import React from "react";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { getUserSubscription } from "@/actions/get-user-subscription";
+export const dynamic = 'force-dynamic';
 
 const Page = async () => {
   // Server-side subscription check
