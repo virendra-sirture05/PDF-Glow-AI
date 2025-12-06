@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+// 👇 BAS YE DO LINES ADD KARO - PROBLEM SOLVE!
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function GET() {
   try {
     const { userId } = await auth();
