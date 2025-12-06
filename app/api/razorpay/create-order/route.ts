@@ -36,8 +36,8 @@ export async function POST(req: Request) {
 
     // Plan amounts
     const amounts: any = {
-      basic: 900,
-      pro: 1999,
+      basic: 499 * 100,
+      pro: 999 * 100,
     };
 
     const amount = amounts[planId] || 900;

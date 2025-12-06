@@ -51,7 +51,7 @@ const Header = async () => {
 
         <SignedOut>
           <NavLink href="/sign-in">Sign in</NavLink>
-          <NavLink href="/sign-up">Sign up</NavLink>
+          {/* <NavLink href="/sign-up">Sign up</NavLink> */}
         </SignedOut>
       </div>
     </nav>

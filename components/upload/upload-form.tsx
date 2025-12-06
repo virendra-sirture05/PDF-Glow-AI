@@ -95,15 +95,16 @@ const UploadForm = () => {
 
       toast.success("Uploading PDF");
 
-      const resp = await startUpload([file]);
-      if (!resp || resp.length === 0) {
+      const uploadResponse = await startUpload([file]);
+      if (!uploadResponse || uploadResponse.length === 0) {
         toast.error("Something went wrong during upload");
         setIsLoading(false);
         setUploading(false);
         return;
       }
 
-      const pdfUrl = resp[0]?.ufsUrl || resp[0]?.serverData?.file?.ufsUrl;
+      const pdfUrl =
+        uploadResponse[0]?.ufsUrl || uploadResponse[0]?.serverData?.fileUrl;
       if (!pdfUrl) {
         toast.error("Failed to get PDF URL");
         setIsLoading(false);
@@ -115,7 +116,10 @@ const UploadForm = () => {
         description: "Hang tight! Our AI is reading through your document!",
       });
 
-      const result = await generatePdfSummary(resp);
+      const result = await generatePdfSummary({
+        fileUrl: uploadResponse[0].serverData.fileUrl,
+        fileName: file.name,
+      });
       const { data = null } = result || {};
 
       if (data?.summary) {
@@ -125,7 +129,7 @@ const UploadForm = () => {
 
         const storedResult = await storePdfSummaryAction({
           summary_text: data.summary,
-          original_file_url: resp?.[0].serverData.file.url,
+          original_file_url: uploadResponse?.[0].serverData.fileUrl,
           title: data.title,
           file_name: file.name,
         });
@@ -133,7 +137,7 @@ const UploadForm = () => {
         toast("Summary Generated", {
           description: "Your PDF has been successfully summarized and saved",
         });
-        
+
         formRef.current?.reset();
         router.push(`/summaries/${storedResult.data?.id}`);
       }

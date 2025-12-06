@@ -54,7 +54,6 @@ const cardVariants = {
     x: 0,
     transition: {
       duration: 0.5,
-      ease: "easeOut",
     },
   },
 };
@@ -66,7 +65,7 @@ export default function PricingSection() {
   const plans: PriceType[] = [
     {
       name: "Basic",
-      price: 9,
+      price: 500,
       description: "Perfect for getting started",
       items: [
         "5 PDF uploads per month",
@@ -78,7 +77,7 @@ export default function PricingSection() {
     },
     {
       name: "Pro",
-      price: 19.99,
+      price: 999,
       description: "For power users and professionals",
       items: [
         "Unlimited PDF uploads",

@@ -175,8 +175,8 @@ const Page = () => {
               id={summary.id}
               title={summary.title || summary.file_name || "Untitled"}
               description={summary.summary_text}
-              createdAt={summary.created_at}
-              completed={summary.status === "completed"}
+              createdAt={new Date(summary.created_at).toLocaleDateString()}
+              completed={summary.status}
               onDelete={() => handleDelete(summary.id)}
             />
           ))}

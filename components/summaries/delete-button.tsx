@@ -31,16 +31,24 @@ export default function DeleteButton({
   const router = useRouter();
 
   const handleDelete = async () => {
-   startTransition(async () => {
-      const result = await deletePdf({ summaryId });
+    startTransition(() => {
+      // ✅ Async logic ko promise ke andar wrap karo
+      deletePdf({ summaryId }).then((result) => {
+        if (!result.success) {
+          toast.error("Failed to delete summary");
+          return;
+        }
 
-      if (!result.success) return toast.error("Failed to delete summary");
-
-      toast.success("Summary deleted successfully");
-
-      router.refresh(); // 👈 UI turant update
+        toast.success("Summary deleted successfully");
+        onDelete(summaryId); // ✅ Parent component ko notify karo
+        router.refresh();
+      }).catch((error) => {
+        console.error("Delete error:", error);
+        toast.error("An error occurred while deleting");
+      });
     });
   };
+
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
@@ -48,6 +56,7 @@ export default function DeleteButton({
           variant="ghost"
           size="icon"
           className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all duration-200"
+          disabled={isPending}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
@@ -65,13 +74,16 @@ export default function DeleteButton({
         </AlertDialogHeader>
 
         <AlertDialogFooter className="gap-2 sm:gap-0">
-          <AlertDialogCancel className="mt-0">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className="mt-0" disabled={isPending}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-red-600 hover:bg-red-700 text-white"
+            className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50"
             onClick={handleDelete}
+            disabled={isPending}
           >
             <Trash2 className="h-4 w-4 mr-2" />
-            Delete
+            {isPending ? "Deleting..." : "Delete"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
